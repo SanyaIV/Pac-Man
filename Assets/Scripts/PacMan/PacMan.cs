@@ -13,9 +13,6 @@ public class PacMan : MonoBehaviour {
     [SerializeField] private float _speed = 0.2f;
     [SerializeField] private LayerMask _wallLayer;
     [SerializeField] private LayerMask _nodeLayer;
-
-    [Header("Extra Life")]
-    [SerializeField] private int _extraLives = 2;
     
     [Header("Movement")]
     [SerializeField] private Node _destination;
@@ -87,5 +84,15 @@ public class PacMan : MonoBehaviour {
         }
 
         _cachedDirection = direction;
+    }
+
+    public Node GetDestination()
+    {
+        return _destination;
+    }
+
+    public void SetDestination(Node destination)
+    {
+        _destination = destination;
     }
 }

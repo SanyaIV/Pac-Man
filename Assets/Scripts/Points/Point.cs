@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Point : MonoBehaviour {
 
-	// Use this for initialization
 	void Start () {
         GameManager.AddPoint(this);
 	}
@@ -18,7 +17,6 @@ public class Point : MonoBehaviour {
     {
         GameManager.CollectPoint();
         gameObject.SetActive(false);
-        Debug.Log(GameManager.PointsLeft());
     }
 
     void OnTriggerEnter2D(Collider2D coll)
