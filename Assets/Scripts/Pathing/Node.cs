@@ -49,4 +49,25 @@ public class Node : MonoBehaviour {
         if (direction.x > 0) return _right;
         else return null;
     }
+
+    public Node GetRandomConnectedNode()
+    {
+        int direction = 0;
+        bool running = true;
+
+        while(running){
+            direction = Random.Range(1, 5);
+
+            if (direction == 1 && _up != null)
+                return _up;
+            if (direction == 2 && _down != null)
+                return _down;
+            if (direction == 3 && _left != null)
+                return _left;
+            if (direction == 4 && _right != null)
+                return _right;
+        }
+
+        return null;
+    }
 }
