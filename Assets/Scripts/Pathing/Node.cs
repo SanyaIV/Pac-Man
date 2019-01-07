@@ -40,4 +40,13 @@ public class Node : MonoBehaviour {
         if (_left) Gizmos.DrawLine(transform.position, _left.transform.position);
         if (_right) Gizmos.DrawLine(transform.position, _right.transform.position);
     }
+
+    public Node GetNodeInDirection(Vector2 direction)
+    {
+        if (direction.y > 0) return _up;
+        if (direction.y < 0) return _down;
+        if (direction.x < 0) return _left;
+        if (direction.x > 0) return _right;
+        else return null;
+    }
 }

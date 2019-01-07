@@ -7,9 +7,10 @@ public class PacMan : MonoBehaviour {
 
     [Header("Constants")]
     [HideInInspector] public const float CHECK_DISTANCE = 30f;
+    [HideInInspector] public const float MIN_CHECK_DISTANCE = 0.5f;
 
     [Header("Settings")]
-    [SerializeField] private float _speed = 0.4f;
+    [SerializeField] private float _speed = 0.2f;
     [SerializeField] private LayerMask _wallLayer;
     [SerializeField] private LayerMask _nodeLayer;
 
@@ -19,20 +20,18 @@ public class PacMan : MonoBehaviour {
     [Header("Movement")]
     [SerializeField] private Node _destination;
     private Vector2 _point = Vector2.zero;
+    private Vector2 _cachedDirection = Vector2.zero;
 
     [Header("Components")]
     private Rigidbody2D _rb;
     private Animator _animator;
-    private CircleCollider2D _coll;
 
     [Header("Helper Variables")]
     private RaycastHit2D _wallHit;
-    private RaycastHit2D[] _hits;
+    private RaycastHit2D _hit;
     private Vector2 _direction;
-    private Node _nextDestination;
 
     void Start () {
-        _coll = GetComponent<CircleCollider2D>();
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _point = transform.position;
@@ -40,13 +39,13 @@ public class PacMan : MonoBehaviour {
 
     void Update()
     {
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKeyDown(KeyCode.UpArrow))
             GetAndSetDestination(Vector2.up);
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKeyDown(KeyCode.DownArrow))
             GetAndSetDestination(Vector2.down);
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
             GetAndSetDestination(Vector2.left);
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKeyDown(KeyCode.RightArrow))
             GetAndSetDestination(Vector2.right);
     }
 
@@ -55,28 +54,38 @@ public class PacMan : MonoBehaviour {
         if (_destination == null)
             return;
 
+        if((Vector2)_destination.transform.position - (Vector2)transform.position != Vector2.zero)
+            _direction = (Vector2)_destination.transform.position - (Vector2)transform.position;
+        _animator.SetFloat("DirX", _direction.x);
+        _animator.SetFloat("DirY", _direction.y);
+
         _point = Vector2.MoveTowards(transform.position, _destination.transform.position, _speed);
         _rb.MovePosition(_point);
 
-        _direction = (Vector2)_destination.transform.position - (Vector2)transform.position;
-        _animator.SetFloat("DirX", _direction.x);
-        _animator.SetFloat("DirY", _direction.y);
+        if(transform.position == _destination.transform.position)
+        {
+            if (_cachedDirection != Vector2.zero && _destination.GetNodeInDirection(_cachedDirection) != null)
+                _destination = _destination.GetNodeInDirection(_cachedDirection);
+            else
+                _destination = _destination.GetNodeInDirection(_direction);
+
+            if (_destination == null)
+                _cachedDirection = Vector2.zero;
+        }
     }
 
     void GetAndSetDestination(Vector2 direction)
     {
         _wallHit = Physics2D.Raycast(transform.position, direction, CHECK_DISTANCE, _wallLayer);
-        _hits = Physics2D.RaycastAll(transform.position, direction, Vector2.Distance(transform.position, _wallHit.point), _nodeLayer);
+        _hit = Physics2D.Raycast(transform.position + (Vector3)direction.normalized * MIN_CHECK_DISTANCE, direction, Vector2.Distance(transform.position, _wallHit.point) - MIN_CHECK_DISTANCE, _nodeLayer);
 
-        foreach(RaycastHit2D hit in _hits)
-            if (hit.collider != null && (_nextDestination == null || Vector2.Distance(transform.position, hit.transform.position) > Vector2.Distance(transform.position, _nextDestination.transform.position)) && Vector2.Distance(transform.position, hit.transform.position) > 0.5f)
-                _nextDestination = hit.collider.GetComponent<Node>();
-                
-
-        if (_nextDestination != null)
+        if (_hit.collider != null)
         {
-            _destination = _nextDestination;
-            _nextDestination = null;
-        }  
+            _destination = _hit.collider.GetComponent<Node>();
+            _cachedDirection = Vector2.zero;
+            return;
+        }
+
+        _cachedDirection = direction;
     }
 }
