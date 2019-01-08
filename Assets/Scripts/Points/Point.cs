@@ -5,7 +5,8 @@ using UnityEngine;
 public class Point : MonoBehaviour {
 
 	void Start () {
-        GameManager.AddPoint(this);
+        GameManager.AddPoint();
+        GameManager.AddResetEvent(ResetEvent);
 	}
 
     public void Enable()
@@ -23,5 +24,10 @@ public class Point : MonoBehaviour {
     {
         if(coll.gameObject.layer == LayerMask.NameToLayer("PacMan"))
             Disable();
+    }
+
+    public void ResetEvent()
+    {
+        gameObject.SetActive(true);
     }
 }

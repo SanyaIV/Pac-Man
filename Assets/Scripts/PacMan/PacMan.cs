@@ -13,6 +13,9 @@ public class PacMan : MonoBehaviour {
     [SerializeField] private float _speed = 0.2f;
     [SerializeField] private LayerMask _wallLayer;
     [SerializeField] private LayerMask _nodeLayer;
+
+    [Header("Life")]
+    [SerializeField] private int _extraLives = 2; 
     
     [Header("Movement")]
     [SerializeField] private Node _destination;
@@ -26,12 +29,26 @@ public class PacMan : MonoBehaviour {
     [Header("Helper Variables")]
     private RaycastHit2D _wallHit;
     private RaycastHit2D _hit;
-    private Vector2 _direction;
+    private Vector2 _direction = Vector2.left;
+
+    [Header("Reset Variables")]
+    private Vector2 _startPos;
+    private Vector2 _startDirection;
+    private Node _startDestination;
+    private int _startExtraLives;
 
     void Start () {
+        _startPos = transform.position;
+        _startDestination = _destination;
+        _startExtraLives = _extraLives;
+        _startDirection = _direction;
+
         _animator = GetComponent<Animator>();
         _rb = GetComponent<Rigidbody2D>();
         _point = transform.position;
+
+        GameManager.AddResetEvent(ResetEvent);
+        GameManager.AddReviveEvent(ReviveEvent);
 	}
 
     void Update()
@@ -51,8 +68,6 @@ public class PacMan : MonoBehaviour {
         if (_destination == null)
             return;
 
-        if((Vector2)_destination.transform.position - (Vector2)transform.position != Vector2.zero)
-            _direction = (Vector2)_destination.transform.position - (Vector2)transform.position;
         _animator.SetFloat("DirX", _direction.x);
         _animator.SetFloat("DirY", _direction.y);
 
@@ -62,12 +77,20 @@ public class PacMan : MonoBehaviour {
         if(transform.position == _destination.transform.position)
         {
             if (_cachedDirection != Vector2.zero && _destination.GetNodeInDirection(_cachedDirection) != null)
+            {
                 _destination = _destination.GetNodeInDirection(_cachedDirection);
+                _direction = _cachedDirection;
+            }  
             else
+            {
                 _destination = _destination.GetNodeInDirection(_direction);
+            }
 
             if (_destination == null)
+            {
                 _cachedDirection = Vector2.zero;
+                _direction = Vector2.zero;
+            }
         }
     }
 
@@ -79,6 +102,7 @@ public class PacMan : MonoBehaviour {
         if (_hit.collider != null)
         {
             _destination = _hit.collider.GetComponent<Node>();
+            _direction = direction;
             _cachedDirection = Vector2.zero;
             return;
         }
@@ -94,5 +118,35 @@ public class PacMan : MonoBehaviour {
     public void SetDestination(Node destination)
     {
         _destination = destination;
+    }
+
+    public int GetExtraLives()
+    {
+        return _extraLives;
+    }
+
+    public void Kill()
+    {
+        if (_extraLives > 0)
+            GameManager.Revive();
+        else
+            GameManager.GameOver();
+    }
+
+    public void ResetEvent()
+    {
+        gameObject.SetActive(true);
+        transform.position = _startPos;
+        _destination = _startDestination;
+        _extraLives = _startExtraLives;
+        _direction = _startDirection;
+    }
+
+    public void ReviveEvent()
+    {
+        transform.position = _startPos;
+        _destination = _startDestination;
+        _direction = _startDirection;
+        _extraLives--;
     }
 }
