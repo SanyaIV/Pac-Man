@@ -15140,6 +15140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _button: {fileID: 688657802}
+  _selectOnEnable: 1
 --- !u!1 &690455079
 GameObject:
   m_ObjectHideFlags: 0
@@ -44012,6 +44013,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _button: {fileID: 1921016504}
+  _selectOnEnable: 0
 --- !u!1 &1926536914
 GameObject:
   m_ObjectHideFlags: 0

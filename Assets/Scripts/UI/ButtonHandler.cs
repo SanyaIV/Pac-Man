@@ -15,6 +15,7 @@ public class ButtonHandler : MonoBehaviour, ISelectHandler, IDeselectHandler {
 
     [Header("Button")]
     [SerializeField] private Button _button;
+    [SerializeField] private bool _selectOnEnable = false;
     private Text _text;
 
     public void OnSelect(BaseEventData eventData)
@@ -36,5 +37,11 @@ public class ButtonHandler : MonoBehaviour, ISelectHandler, IDeselectHandler {
     {
         _button = GetComponent<Button>();
         _text = _button.GetComponentInChildren<Text>();
+    }
+
+    public void OnEnable()
+    {
+        if (_selectOnEnable)
+            _button.Select();
     }
 }
