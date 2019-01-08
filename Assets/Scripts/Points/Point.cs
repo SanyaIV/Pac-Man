@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class represents the Points that Pac-Man can eat.
+/// </summary>
 public class Point : MonoBehaviour {
 
 	void Start () {
-        GameManager.AddPoint();
+        GameManager.AddPoint(this);
         GameManager.AddResetEvent(ResetEvent);
 	}
 
@@ -14,6 +17,9 @@ public class Point : MonoBehaviour {
         gameObject.SetActive(true);
     }
 
+    /// <summary>
+    /// The point is disabled instead of deleted so it can just be re-enabled in the future when a Reset Event happens.
+    /// </summary>
     private void Disable()
     {
         GameManager.CollectPoint();
@@ -26,8 +32,19 @@ public class Point : MonoBehaviour {
             Disable();
     }
 
+    public void HardMode()
+    {
+        if(GetComponent<SpriteRenderer>().color == Color.clear)
+            GetComponent<SpriteRenderer>().color = Color.white;
+        else
+            GetComponent<SpriteRenderer>().color = Color.clear;
+    }
+
+    /// <summary>
+    /// This method is called when a Reset Event happens.
+    /// </summary>
     public void ResetEvent()
     {
-        gameObject.SetActive(true);
+        Enable();
     }
 }

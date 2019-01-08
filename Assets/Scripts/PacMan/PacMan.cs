@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class represents Pac-Man.
+/// </summary>
 [RequireComponent(typeof (Rigidbody2D))]
 public class PacMan : MonoBehaviour {
 
@@ -94,6 +97,11 @@ public class PacMan : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// This method tries to find a Node in a specific direction and then sets that node as the destination.
+    /// If no Node is found then the direction will be cached to be checked later.
+    /// </summary>
+    /// <param name="direction">The direction to check in</param>
     void GetAndSetDestination(Vector2 direction)
     {
         _wallHit = Physics2D.Raycast(transform.position, direction, CHECK_DISTANCE, _wallLayer);
@@ -125,6 +133,10 @@ public class PacMan : MonoBehaviour {
         return _extraLives;
     }
 
+    /// <summary>
+    /// This method is called whenever Pac-Man collides with an enemy that isn't vulnerable.
+    /// This method is in charge of deciding whether to Revive Pac-Man or go into a Game Over state.
+    /// </summary>
     public void Kill()
     {
         if (_extraLives > 0)
@@ -133,6 +145,9 @@ public class PacMan : MonoBehaviour {
             GameManager.GameOver();
     }
 
+    /// <summary>
+    /// This method is called whenever the game is Reset.
+    /// </summary>
     public void ResetEvent()
     {
         gameObject.SetActive(true);
@@ -142,6 +157,9 @@ public class PacMan : MonoBehaviour {
         _direction = _startDirection;
     }
 
+    /// <summary>
+    /// This method is called whenever Pac-Man is revived.
+    /// </summary>
     public void ReviveEvent()
     {
         transform.position = _startPos;

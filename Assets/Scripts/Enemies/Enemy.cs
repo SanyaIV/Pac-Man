@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class represents the enemy.
+/// </summary>
 public class Enemy : MonoBehaviour {
 
     [Header("Destination")]
@@ -59,10 +62,16 @@ public class Enemy : MonoBehaviour {
         Rotate(transform.position, _destination.transform.position);
         Move(_destination.transform.position, _vulnerable ? _vulnerableMoveSpeed : _speed);
 
-        if (transform.position == _destination.transform.position)
+        if (transform.position == _destination.transform.position) //Get a new destination if the previous destination was reached, in order to never stop and have continous movement.
             _destination = _destination.GetRandomConnectedNode();
     }
 
+    /// <summary>
+    /// This method is used to "rotate" the enemy correctly.
+    /// No rotation is actually done, instead a direction is calculated and animator variables set to affect the Unity Animator system
+    /// </summary>
+    /// <param name="from">The origin position, most properly the position of the enemy</param>
+    /// <param name="to">The destination position</param>
     private void Rotate(Vector2 from, Vector2 to)
     {
         _direction = to - from;
@@ -70,12 +79,20 @@ public class Enemy : MonoBehaviour {
         _animator.SetFloat("DirY", _direction.y);
     }
 
+    /// <summary>
+    /// This method is used to move the enemy.
+    /// </summary>
+    /// <param name="toPosition">The destination to move to</param>
+    /// <param name="speed">The speed to move with</param>
     private void Move(Vector2 toPosition, float speed)
     {
         _point = Vector2.MoveTowards(transform.position, toPosition, speed);
         _rb.MovePosition(_point);
     }
 
+    /// <summary>
+    /// This method is used to start the GhostHouseRoutine coroutine
+    /// </summary>
     public void StartGhostHouseRoutine()
     {
         _ghostHouseCounter = 0f;
@@ -85,6 +102,9 @@ public class Enemy : MonoBehaviour {
 
     }
 
+    /// <summary>
+    /// This method is called to make the ghost vulnerable.
+    /// </summary>
     public void MakeVulnerable()
     {
         _vulnerableCounter = 0f;
@@ -93,6 +113,10 @@ public class Enemy : MonoBehaviour {
             _coroutine = StartCoroutine(Vulnerable());
     }
 
+
+    /// <summary>
+    /// This method is used to kill the enemy when it collides with Pac-Man while vulnerable.
+    /// </summary>
     private void Kill()
     {
         ResetReviveEvent();
@@ -106,6 +130,9 @@ public class Enemy : MonoBehaviour {
             Kill();
     }
 
+    /// <summary>
+    /// This method is called whenever the game enters a Reset or Revive event, it handles some clean-up.
+    /// </summary>
     public void ResetReviveEvent()
     {
         transform.position = _startPos;
@@ -117,10 +144,14 @@ public class Enemy : MonoBehaviour {
         if(_ghostHouseCoroutine != null)
         {
             StopCoroutine(_ghostHouseCoroutine);
+            _inGhostHouse = false;
             StartGhostHouseRoutine();
         }
     }
 
+    /// <summary>
+    /// This coroutine handles Vulnerability for the enemy, mainly a counter.
+    /// </summary>
     private IEnumerator Vulnerable()
     {
         _vulnerable = true;
@@ -138,6 +169,10 @@ public class Enemy : MonoBehaviour {
         yield break;
     }
 
+
+    /// <summary>
+    /// This coroutine handles the Ghost House Routine, keep track of counters for it and when and how to move on to exit nodes and Node nodes.
+    /// </summary>
     private IEnumerator GhostHouseRoutine()
     {
         _inGhostHouse = true;

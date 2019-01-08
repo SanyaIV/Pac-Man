@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class represents the energizers that Pac-Man can pick up to make ghosts vulnerable.
+/// </summary>
 public class Energizer : MonoBehaviour {
 
     [Header("Enemies")]

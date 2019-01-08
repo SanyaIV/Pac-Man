@@ -4,6 +4,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
+/// <summary>
+/// This class is the Game Manager, it helps out in doing certain things and maintains the game state.
+/// Most of the things in the class are static and the Game Manager utilizes a simpleton pattern.
+/// </summary>
 public class GameManager : MonoBehaviour {
 
     [Header("GameManager")]
@@ -17,7 +21,7 @@ public class GameManager : MonoBehaviour {
     private static PacMan _pacMan;
 
     [Header("Points")]
-    private static int _totalPoints = 0;
+    private static List<Point> _allPoints = new List<Point>();
     private static int _collectedPoints = 0;
 
     [Header("Extra Life UI")]
@@ -40,11 +44,17 @@ public class GameManager : MonoBehaviour {
         _pacMan = GameObject.Find("PacMan").GetComponent<PacMan>();
     }
 
-	public static void AddPoint()
+    /// <summary>
+    /// This method is called by the Point class and is used to increment the total amount of points in the level.
+    /// </summary>
+	public static void AddPoint(Point point)
     {
-        _totalPoints++;
+        _allPoints.Add(point);
     }
 
+    /// <summary>
+    /// This method is called when Pac-Man eats a Point.
+    /// </summary>
     public static void CollectPoint()
     {
         _collectedPoints++;
@@ -53,6 +63,9 @@ public class GameManager : MonoBehaviour {
             Win();
     }
 
+    /// <summary>
+    /// This method is called when Pac-Man has died but has an extra life.
+    /// </summary>
     public static void Revive()
     {
         Time.timeScale = 1f;
@@ -70,6 +83,9 @@ public class GameManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// This method is used to reset / restart the game. 
+    /// </summary>
     public static void Reset()
     {
         Time.timeScale = 1f;
@@ -80,6 +96,9 @@ public class GameManager : MonoBehaviour {
         _collectedPoints = 0;
     }
 
+    /// <summary>
+    /// This method is called when Pac-Man dies and has no extra life.
+    /// </summary>
     public static void GameOver()
     {
         Time.timeScale = 0f;
@@ -87,6 +106,9 @@ public class GameManager : MonoBehaviour {
         gameManager._gameOverUIObject.SetActive(true);
     }
 
+    /// <summary>
+    /// This method is called when Pac-Man has collected all Points.
+    /// </summary>
     public static void Win()
     {
         Time.timeScale = 0f;
@@ -94,6 +116,10 @@ public class GameManager : MonoBehaviour {
         gameManager._gameOverUIObject.SetActive(true);
     }
 
+    /// <summary>
+    /// Instance method to call a static method, workaround for Unity's UnityEvent system which can't handle Static methods.
+    /// Called by a UI-button.
+    /// </summary>
     public void InstancedReset()
     {
         Reset();
@@ -104,11 +130,23 @@ public class GameManager : MonoBehaviour {
         Application.Quit();
     }
 
-    public static int PointsLeft()
+    public void HardMode()
     {
-        return _totalPoints - _collectedPoints;
+        foreach (Point point in _allPoints)
+            point.HardMode();
     }
 
+    public static int PointsLeft()
+    {
+        return _allPoints.Count - _collectedPoints;
+    }
+
+    /// <summary>
+    /// This method is called whenever a class wants to install listener to the Revive Event.
+    /// The Revive Event is the event that happens when Pac-Man is to be revived.
+    /// In the case that Pac-Man is revived, the GameManager will invoke the UnitEvent with the listeners, causing the listeners to execute the methods.
+    /// </summary>
+    /// <param name="call">The UnityAction call to install as a listener</param>
     public static void AddReviveEvent(UnityAction call)
     {
         _reviveEventManager.AddListener(call);
@@ -119,6 +157,12 @@ public class GameManager : MonoBehaviour {
         _reviveEventManager.RemoveListener(call);
     }
 
+    /// <summary>
+    /// This method is called whenever a class wants to install listener to the Reset Event.
+    /// The Reset Event is the event that happens when the player chooses to restart the game after either running out of lives or winning the game.
+    /// When the Reset Event is called, the GameManager will invoke the UnitEvent with the listeners, causing the listeners to execute the methods.
+    /// </summary>
+    /// <param name="call">The UnityAction call to install as a listener</param>
     public static void AddResetEvent(UnityAction call)
     {
         _resetEventManager.AddListener(call);
