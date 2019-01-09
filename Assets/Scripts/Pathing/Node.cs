@@ -6,7 +6,7 @@ using UnityEngine;
 /// This class represents a Node which is used to navigation.
 /// Each node keeps track of its neighbours.
 /// </summary>
-public class Node : MonoBehaviour {
+public class Node : MonoBehaviour, IPriorityQueueItem<Node> {
 
     [Header("Constants")]
     [HideInInspector] public const float MAX_CHECK_DISTANCE = 10f;
@@ -18,16 +18,33 @@ public class Node : MonoBehaviour {
     [SerializeField] private Node _left;
     [SerializeField] private Node _right;
     [SerializeField] private LayerMask _layerMask;
+    [SerializeField] private List<Node> _neighbours;
+
+    [Header("A*")]
+    public float gCost;
+    public float hCost;
+    public float fCost { get { return gCost + hCost; } }
+    public Node parent;
+
+    [Header("Priority Queue")]
+    private int priorityQueueIndex;
 	
     /// <summary>
     /// This method is used to find the neighbouring nodes.
     /// </summary>
     public void FindNeighbours()
     {
-        _up = RaycastForNode(Vector2.up);
-        _down = RaycastForNode(Vector2.down);
-        _left = RaycastForNode(Vector2.left);
-        _right = RaycastForNode(Vector2.right);
+        _neighbours = new List<Node>();
+
+        if ((_up = RaycastForNode(Vector2.up)) != null)
+            _neighbours.Add(_up);
+        if ((_down = RaycastForNode(Vector2.down)) != null)
+            _neighbours.Add(_down);
+        if ((_left = RaycastForNode(Vector2.left)) != null)
+            _neighbours.Add(_left);
+        if ((_right = RaycastForNode(Vector2.right)) != null)
+            _neighbours.Add(_right);
+
     }
 
     /// <summary>
@@ -79,22 +96,41 @@ public class Node : MonoBehaviour {
     /// <returns>A Randomly selected Node</returns>
     public Node GetRandomConnectedNode()
     {
-        int direction = 0;
-        bool running = true;
+        if (_neighbours.Count > 0)
+            return _neighbours[Random.Range(0, _neighbours.Count)];
+        else
+            return null;
+    }
 
-        while(running){
-            direction = Random.Range(1, 5);
+    public List<Node> GetNeighbours()
+    {
+        return _neighbours;
+    }
 
-            if (direction == 1 && _up != null)
-                return _up;
-            if (direction == 2 && _down != null)
-                return _down;
-            if (direction == 3 && _left != null)
-                return _left;
-            if (direction == 4 && _right != null)
-                return _right;
+    public int PriorityQueueIndex
+    {
+        get
+        {
+            return priorityQueueIndex;
         }
+        set
+        {
+            priorityQueueIndex = value;
+        }
+    }
 
-        return null;
+    public float GetDistance(Node other)
+    {
+        return Vector2.Distance(transform.position, other.transform.position);
+    }
+
+    public int CompareTo(Node nodeToCompareTo)
+    {
+        int compare = fCost.CompareTo(nodeToCompareTo.fCost);
+
+        if(compare == 0)
+            compare = hCost.CompareTo(nodeToCompareTo.hCost);
+
+        return -compare;
     }
 }
