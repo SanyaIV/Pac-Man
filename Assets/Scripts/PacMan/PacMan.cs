@@ -33,6 +33,7 @@ public class PacMan : MonoBehaviour {
     private RaycastHit2D _wallHit;
     private RaycastHit2D _hit;
     private Vector2 _direction = Vector2.left;
+    private Node _previousDestination;
 
     [Header("Reset Variables")]
     private Vector2 _startPos;
@@ -79,6 +80,7 @@ public class PacMan : MonoBehaviour {
 
         if(transform.position == _destination.transform.position)
         {
+            _previousDestination = _destination;
             if (_cachedDirection != Vector2.zero && _destination.GetNodeInDirection(_cachedDirection) != null)
             {
                 _destination = _destination.GetNodeInDirection(_cachedDirection);
@@ -120,7 +122,10 @@ public class PacMan : MonoBehaviour {
 
     public Node GetDestination()
     {
-        return _destination;
+        if (_destination != null)
+            return _destination;
+        else
+            return _previousDestination;
     }
 
     public void SetDestination(Node destination)

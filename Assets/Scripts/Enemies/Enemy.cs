@@ -7,8 +7,11 @@ using UnityEngine;
 /// </summary>
 public class Enemy : MonoBehaviour {
 
+    [Header("PacMan")]
+    protected PacMan _pacMan;
+
     [Header("Destination")]
-    [SerializeField] private Node _destination;
+    [SerializeField] protected Node _destination;
 
     [Header("Ghost House")]
     [SerializeField] private float _timeInGhostHouse = 5f;
@@ -40,6 +43,7 @@ public class Enemy : MonoBehaviour {
 
     void Awake()
     {
+        _pacMan = GameObject.Find("PacMan").GetComponent<PacMan>();
         _startDestination = _destination;
         _startPos = transform.position;
         _animator = GetComponent<Animator>();
@@ -62,8 +66,22 @@ public class Enemy : MonoBehaviour {
         Rotate(transform.position, _destination.transform.position);
         Move(_destination.transform.position, _vulnerable ? _vulnerableMoveSpeed : _speed);
 
-        if (transform.position == _destination.transform.position) //Get a new destination if the previous destination was reached, in order to never stop and have continous movement.
-            _destination = _destination.GetRandomConnectedNode();
+        if (transform.position == _destination.transform.position) { //Get a new destination if the previous destination was reached, in order to never stop and have continous movement.
+            if (!_vulnerable)
+                SetDestination();
+            else
+                SetRandomDestination();
+        }
+    }
+
+    public virtual void SetDestination()
+    {
+        SetRandomDestination();
+    }
+
+    protected void SetRandomDestination()
+    {
+        _destination = _destination.GetRandomConnectedNode();
     }
 
     /// <summary>

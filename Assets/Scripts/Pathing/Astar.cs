@@ -9,6 +9,9 @@ public static class Astar{
 
 	public static List<Node> FindPath(Node startNode, Node endNode, int maxPriorityQueueSize)
     {
+        if (startNode == null || endNode == null || maxPriorityQueueSize <= 0)
+            return null;
+
         PriorityQueue<Node> openSet = new PriorityQueue<Node>(maxPriorityQueueSize);
         HashSet<Node> closedSet = new HashSet<Node>();
 

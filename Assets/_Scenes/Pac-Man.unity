@@ -1257,9 +1257,9 @@ GameObject:
   - component: {fileID: 69711182}
   - component: {fileID: 69711187}
   - component: {fileID: 69711186}
-  - component: {fileID: 69711185}
   - component: {fileID: 69711184}
   - component: {fileID: 69711183}
+  - component: {fileID: 69711185}
   m_Layer: 0
   m_Name: Pinky
   m_TagString: Untagged
@@ -1323,7 +1323,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 69711181}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2261eb004524c994785e2d4c713f6fa0, type: 3}
+  m_Script: {fileID: 11500000, guid: d54ac91a9c0996d4a9c84941016cf64a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _destination: {fileID: 0}
@@ -1332,6 +1332,7 @@ MonoBehaviour:
   _speed: 0.3
   _vulnerableTime: 9
   _vulnerableMoveSpeed: 0.01
+  _chance: 25
 --- !u!95 &69711186
 Animator:
   serializedVersion: 3
@@ -13017,7 +13018,7 @@ MonoBehaviour:
   _destination: {fileID: 1772795811}
   _timeInGhostHouse: 5
   _startNode: {fileID: 0}
-  _speed: 0.15
+  _speed: 0.2
   _vulnerableTime: 7
   _vulnerableMoveSpeed: 0.1
 --- !u!1 &592151452
@@ -21425,7 +21426,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 958498519}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2261eb004524c994785e2d4c713f6fa0, type: 3}
+  m_Script: {fileID: 11500000, guid: c71ad56ecd4b3264aba89de5e622cda8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _destination: {fileID: 0}
@@ -37878,7 +37879,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8510d5188ff3ee747bd1546fa346f53f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 0.1
+  _speed: 0.2
   _wallLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -43002,13 +43003,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1871658072}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2261eb004524c994785e2d4c713f6fa0, type: 3}
+  m_Script: {fileID: 11500000, guid: d28ee9879ee84c248a015332bb1a01ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _destination: {fileID: 0}
   _timeInGhostHouse: 7
   _startNode: {fileID: 216752443}
-  _speed: 0.2
+  _speed: 0.15
   _vulnerableTime: 11
   _vulnerableMoveSpeed: 0.1
 --- !u!58 &1871658075
